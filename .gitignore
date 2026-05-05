@@ -1,0 +1,34 @@
+# Build 
+build/
+
+# Archivos compilados
+*.bin
+*.elf
+*.map
+*.a
+*.obj
+
+# Logs
+*.log
+
+# Temporales
+*.tmp
+*.bak
+*.swp
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+
+# PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
