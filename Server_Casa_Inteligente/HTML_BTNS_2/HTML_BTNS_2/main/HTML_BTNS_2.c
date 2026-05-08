@@ -57,7 +57,7 @@ static const char html[] =
 "</head>"
 
 "<body style='text-align:center;font-family:sans-serif;'>"
-"<h2>Control 2 LEDs</h2>"
+"<h2>Control 2 LEDs</h2>"  // Título.
 
 // LED 1.
 "<h3>LED 1</h3>"
