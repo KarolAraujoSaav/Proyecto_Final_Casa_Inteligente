@@ -3,8 +3,8 @@
 //
 // Se comunica con el ESP32_MAESTRO mediante UART:
 //
-// RX_16 ← Recibe estados del maestro.
-// TX_17 → Envía comandos al maestro.
+// RX_2 ← Recibe estados del maestro.
+// TX_4 → Envía comandos al maestro.
 //
 // Protocolo UART compartido:
 //"puerta,brillo,luz_ventana,luz_puerta,reset\n"
@@ -36,8 +36,8 @@
 #define UART_PORT UART_NUM_1  // Puerto UART utilizado.
 
 // Pines UART.
-#define UART_TX GPIO_NUM_17
-#define UART_RX GPIO_NUM_16
+#define UART_TX GPIO_NUM_4
+#define UART_RX GPIO_NUM_2
 
 #define UART_BAUD_RATE 9600  // Velocidad de transmisión.
 #define UART_BUF_SIZE 256
