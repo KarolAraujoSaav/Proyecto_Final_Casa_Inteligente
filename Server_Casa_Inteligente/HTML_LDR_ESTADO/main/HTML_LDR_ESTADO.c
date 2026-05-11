@@ -236,7 +236,7 @@ static const char html[] =
 
 "<div class='card'>"
 
-"<h2> Control de Puerta</h2>"   // Título de sección.
+"<h2> Control de la Puerta</h2>"   // Título de sección.
 
 "<button class='on' onclick=\"setDoor('open')\">"  // Botón para abrir la puerta.
 "ABRIR"
