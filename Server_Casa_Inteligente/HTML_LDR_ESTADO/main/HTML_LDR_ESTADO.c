@@ -36,7 +36,7 @@
 #define UART_PORT UART_NUM_1  // Puerto UART utilizado.
 
 // Pines UART.
-#define UART_TX GPIO_NUM_4
+#define UART_TX GPIO_NUM_4  // Cambio de pines.
 #define UART_RX GPIO_NUM_2
 
 #define UART_BAUD_RATE 9600  // Velocidad de transmisión.
