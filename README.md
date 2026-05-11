@@ -84,7 +84,7 @@ El sistema permite controlar funciones tanto de manera local como remota mediant
 ## 📸 Evidencias
 
 ### Maqueta del sistema
-
+![Maqueta](Imágenes/Maqueta.jpg)
 
 ### Página web
 ![Interfaz Web](Imágenes/Web.png)
