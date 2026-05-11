@@ -90,7 +90,7 @@ El sistema permite controlar funciones tanto de manera local como remota mediant
 ![Interfaz Web](Imágenes/Web.png)
 
 ### Arquitectura general
-![Planteamiento de hardware](Imagenes/Planteamiento_Hardware.jpeg)
+![Planteamiento de hardware](Imágenes/Planteamiento_Hardware.jpeg)
 ---
 
 ## Integrantes
