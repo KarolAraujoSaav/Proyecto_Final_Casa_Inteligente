@@ -1,6 +1,5 @@
 // ======================================================
 // ESP32_WIFI
-// Crea un Access Point WiFi con página web de control.
 //
 // Se comunica con el ESP32_MAESTRO mediante UART:
 //
@@ -8,15 +7,7 @@
 // TX_17 → Envía comandos al maestro.
 //
 // Protocolo UART compartido:
-//
-// "puerta,brillo,luz_ventana,luz_puerta,reset\n"
-//
-// Ejemplo:
-// "1,75,1,0,0\n"
-//
-// Baud Rate UART: 9600
-// Red WiFi AP: CASA_INTELIGENTE
-// Contraseña: 87654321
+//"puerta,brillo,luz_ventana,luz_puerta,reset\n"
 // ======================================================
 
 #include <stdio.h>
@@ -30,22 +21,25 @@
 #include "esp_log.h"
 #include "nvs_flash.h"
 #include "esp_event.h"
-#include "esp_netif.h"
-#include "esp_wifi.h"
-#include "esp_http_server.h"
+#include "esp_netif.h"            // Interfaz de red.
+#include "esp_wifi.h"             // Control WiFi.
+#include "esp_http_server.h"      // Servidor HTTP
 
 #include "driver/gpio.h"
-#include "driver/uart.h"
+#include "driver/uart.h"          // Comunicación UART.
 
 
 // ======================================================
 // CONFIGURACIÓN UART
 // ======================================================
 
-#define UART_PORT UART_NUM_1
+#define UART_PORT UART_NUM_1  // Puerto UART utilizado.
+
+// Pines UART.
 #define UART_TX GPIO_NUM_17
 #define UART_RX GPIO_NUM_16
-#define UART_BAUD_RATE 9600
+
+#define UART_BAUD_RATE 9600  // Velocidad de transmisión.
 #define UART_BUF_SIZE 256
 
 
@@ -53,8 +47,8 @@
 // CONFIGURACIÓN WIFI
 // ======================================================
 
-#define SSID "CASA_INTELIGENTE"
-#define PASS "87654321"
+#define SSID "CASA_INTELIGENTE"  // Nombre de la red WiFi.
+#define PASS "87654321"  // Contraseña de la red (mínimo 8 caracteres). 
 
 
 // ======================================================
@@ -96,15 +90,15 @@ typedef enum {
 // VARIABLES GLOBALES
 // ======================================================
 
-static estado_puerta_t puerta_estado = PUERTA_CERRADA;
+static estado_puerta_t puerta_estado = PUERTA_CERRADA;  // Estado actual de la puerta.
 
 static estado_luz_t luz_vent_estado = LUZ_APAGADA;
 
-static int brillo_luz = 0;
+static int brillo_luz = 0;  // Nivel de brillo de LEDs.
 
-static estado_reset_t sistema_estado = SISTEMA_NORMAL;
+static estado_reset_t sistema_estado = SISTEMA_NORMAL;  // Estado general del sistema.
 
-static estado_luz_t luz_puerta_estado = LUZ_APAGADA;
+static estado_luz_t luz_puerta_estado = LUZ_APAGADA;  // Estado de luz encima de la puerta.
 
 
 // ======================================================
@@ -130,13 +124,13 @@ static const char html[] =
 // CONTROL PUERTA
 // ======================================================
 
-"<h2>CONTROL DE PUERTA</h2>"
+"<h2>CONTROL DE PUERTA</h2>"  // Título de sección.
 
-"<button onclick=\"setDoor('open')\">ABRIR PUERTA</button>"
+"<button onclick=\"setDoor('open')\">ABRIR PUERTA</button>"  // Botón para abrir puerta.
 
 "<br><br>"
 
-"<button onclick=\"setDoor('close')\">CERRAR PUERTA</button>"
+"<button onclick=\"setDoor('close')\">CERRAR PUERTA</button>"  // Botón para cerrar puerta.
 
 "<br><br>"
 
@@ -164,14 +158,15 @@ static const char html[] =
 // SLIDER BRILLO
 // ======================================================
 
+// Slider para controlar brillo.
 "<input type='range' min='0' max='100' value='0' id='slider' "
 "oninput='setBrightness(this.value)'>"
 
 "<br><br>"
 
-"<p id='brillo_txt'>Brillo: 0%</p>"
+"<p id='brillo_txt'>Brillo: 0%</p>"  // Texto de porcentaje de brillo.
 
-"<p id='estado_luz'>Estado LEDs ventana: APAGADOS</p>"
+"<p id='estado_luz'>Estado LEDs ventana: APAGADOS</p>"  // Estado de LEDs ventana.
 
 "<hr>"
 
@@ -206,31 +201,31 @@ static const char html[] =
 
 "<script>"
 
-"function setDoor(action){"
+"function setDoor(action){"  // Función para controlar puerta.
 
 " fetch('/set?door='+action).then(update);"
 
 "}"
 
-"function setLight(action){"
+"function setLight(action){"  // Función para controlar LEDs.
 
 " fetch('/set?light='+action).then(update);"
 
 "}"
 
-"function setBrightness(value){"
+"function setBrightness(value){"  // Función para modificar brillo.
 
 " fetch('/set?brightness='+value).then(update);"
 
 "}"
 
-"function resetSystem(){"
+"function resetSystem(){"  // Función para reiniciar sistema.
 
 " fetch('/set?reset=1').then(update);"
 
 "}"
 
-"function update(){"
+"function update(){"  // Solicita estados actuales al ESP32.
 
 " fetch('/state').then(r=>r.json()).then(s=>{"
 
@@ -240,7 +235,7 @@ static const char html[] =
 
 "  document.getElementById('brillo_txt').innerText='Brillo: '+s.brillo+'%';"
 
-"  document.getElementById('slider').value=s.brillo;"
+"  document.getElementById('slider').value=s.brillo;"  // Actualiza posición del slider.
 
 "  document.getElementById('estado_luz_puerta').innerText='Luz puerta: '+s.luz_puerta;"
 
@@ -250,7 +245,7 @@ static const char html[] =
 
 "}"
 
-"setInterval(update,1000);"
+"setInterval(update,1200);"  // Actualiza información cada 1.2 segundos.
 
 "update();"
 
@@ -263,7 +258,7 @@ static const char html[] =
 // CONFIGURACIÓN UART
 // ======================================================
 
-void uart_init(void) {
+void uart_init(void) {  // Inicializa la comunicación UART.
 
     uart_config_t cfg = {
 
@@ -279,7 +274,9 @@ void uart_init(void) {
     };
 
     uart_param_config(UART_PORT, &cfg);
-
+    
+    // Configura pines TX y RX.
+    
     uart_set_pin(
         UART_PORT,
         UART_TX,
@@ -287,7 +284,9 @@ void uart_init(void) {
         UART_PIN_NO_CHANGE,
         UART_PIN_NO_CHANGE
     );
-
+    
+    // Instala driver UART.
+    
     uart_driver_install(
         UART_PORT,
         UART_BUF_SIZE * 2,
@@ -334,7 +333,7 @@ void enviar_uart(void) {
 // RECEPCIÓN UART
 // ======================================================
 
-void recibir_estado_uart(void) {
+void recibir_estado_uart(void) {  // Recibe estados enviados por el ESP32 maestro.
 
     uint8_t buf[UART_BUF_SIZE];
 
@@ -354,7 +353,7 @@ void recibir_estado_uart(void) {
 
     int p, b, lv, lp, r;
 
-    if (sscanf((char *)buf, "%d,%d,%d,%d,%d", &p, &b, &lv, &lp, &r) == 5) {
+    if (sscanf((char *)buf, "%d,%d,%d,%d,%d", &p, &b, &lv, &lp, &r) == 5) {   // Intenta separar los datos recibidos.
 
         if (p == 0 || p == 1) {
 
@@ -388,9 +387,9 @@ void recibir_estado_uart(void) {
 // CONFIGURACIÓN WIFI
 // ======================================================
 
-void wifi_init(void) {
+void wifi_init(void) {  // Inicializa el ESP32 como Access Point.
 
-    esp_netif_create_default_wifi_ap();
+    esp_netif_create_default_wifi_ap();  // Crea interfaz WiFi AP.
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
 
@@ -426,7 +425,7 @@ void wifi_init(void) {
 // HANDLER "/"
 // ======================================================
 
-esp_err_t root_get(httpd_req_t *req) {
+esp_err_t root_get(httpd_req_t *req) {  
 
     httpd_resp_set_type(req, "text/html");
 
@@ -440,13 +439,13 @@ esp_err_t root_get(httpd_req_t *req) {
 // HANDLER "/set"
 // ======================================================
 
-esp_err_t set_get(httpd_req_t *req) {
+esp_err_t set_get(httpd_req_t *req) {  // Recibe comandos desde la página web.
 
     char query[64];
 
     char val[16];
 
-    if (httpd_req_get_url_query_str(req, query, sizeof(query)) != ESP_OK) {
+    if (httpd_req_get_url_query_str(req, query, sizeof(query)) != ESP_OK) {  // Obtiene parámetros de URL.
 
         httpd_resp_sendstr(req, "OK");
 
@@ -561,7 +560,7 @@ esp_err_t set_get(httpd_req_t *req) {
 // HANDLER "/state"
 // ======================================================
 
-esp_err_t state_get(httpd_req_t *req) {
+esp_err_t state_get(httpd_req_t *req) {  // Envía estados actuales en formato JSON.
 
     recibir_estado_uart();
 
