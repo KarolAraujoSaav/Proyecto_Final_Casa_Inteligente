@@ -107,119 +107,253 @@ static estado_luz_t luz_puerta_estado = LUZ_APAGADA;  // Estado de luz encima de
 
 static const char html[] =
 
-"<!DOCTYPE html><html>"
+"<!DOCTYPE html>"   // Define el documento como HTML5.
+"<html lang='es'>"  // Idioma principal de la página
 
 "<head>"
 
-"<meta name='viewport' content='width=device-width, initial-scale=1'>"
+"<meta charset='UTF-8'>"
+"<meta name='viewport' content='width=device-width, initial-scale=1.0'>"  // Hace que la página sea adaptable a celulares.
 
-"<title>Casa Inteligente</title>"
+"<title>Casa Inteligente</title>"  // Título mostrado en la pestaña del navegador.
+
+"<style>"
+
+"*{"
+"margin:0;"
+"padding:0;"
+"box-sizing:border-box;"
+"font-family:Arial,sans-serif;"
+"}"
+
+"body{"
+"background:linear-gradient(135deg,#0f172a,#1e293b);"
+"color:white;"    // Texto blanco.
+"padding:20px;"
+"text-align:center;"
+"}"
+
+// Estilo del título principal.
+"h1{"
+"margin-bottom:20px;"
+"font-size:2rem;"
+"}"
+
+// Contenedor principal de tarjetas.
+".container{"
+"display:flex;"
+"flex-direction:column;"
+"gap:20px;"
+"max-width:500px;"
+"margin:auto;"
+"}"
+
+".card{"
+"background:#1e293b;"
+"padding:20px;"
+"border-radius:20px;"
+"box-shadow:0 4px 15px rgba(0,0,0,0.4);"
+"}"
+
+".card h2{"
+"margin-bottom:15px;"
+"}"
+
+
+// Configuración general de botones.
+"button{"
+"border:none;"
+"padding:12px 18px;"
+"margin:5px;"
+"border-radius:12px;"
+"font-size:1rem;"
+"font-weight:bold;"
+"cursor:pointer;"
+"transition:0.3s;"
+"}"
+
+// Botón verde para acciones de encendido o apertura.
+".on{"
+"background:#22c55e;"
+"color:white;"
+"}"
+
+// Botón rojo para apagar o cerrar.
+".off{"
+"background:#ef4444;"
+"color:white;"
+"}"
+
+".warning{"
+"background:#f59e0b;"
+"color:white;"
+"}"
+
+// Efecto al pasar el mouse sobre botones.
+"button:hover{"
+"transform:scale(1.05);"
+"}"
+
+".status{"
+"margin-top:10px;"
+"font-size:1.1rem;"
+"font-weight:bold;"
+"}"
+
+// Configuración del slider de brillo.
+"input[type=range]{"
+"width:100%;"
+"margin-top:15px;"
+"}"
+
+".value{"
+"margin-top:10px;"
+"font-size:1.2rem;"
+"}"
+
+".door-open{"
+"color:#22c55e;"
+"}"
+
+".door-close{"
+"color:#ef4444;"
+"}"
+
+"</style>"
 
 "</head>"
 
-"<body style='text-align:center;font-family:sans-serif;'>"
+"<body>"
+
+"<h1> CASA INTELIGENTE</h1>"  // Encabezado principal de la página.
+
+"<div class='container'>"
 
 
 // ======================================================
 // CONTROL PUERTA
 // ======================================================
 
-"<h2>CONTROL DE PUERTA</h2>"  // Título de sección.
+"<div class='card'>"
 
-"<button onclick=\"setDoor('open')\">ABRIR PUERTA</button>"  // Botón para abrir puerta.
+"<h2> Control de Puerta</h2>"   // Título de sección.
 
-"<br><br>"
+"<button class='on' onclick=\"setDoor('open')\">"  // Botón para abrir la puerta.
+"ABRIR"
+"</button>"
 
-"<button onclick=\"setDoor('close')\">CERRAR PUERTA</button>"  // Botón para cerrar puerta.
+"<button class='off' onclick=\"setDoor('close')\">" // Botón para cerrar la puerta.
+"CERRAR"
+"</button>"
 
-"<br><br>"
+"<div class='status' id='estado_puerta'>"  // Texto que muestra el estado actual.
+"CERRADA"
+"</div>"
 
-"<p id='estado_puerta'>Estado puerta: CERRADA</p>"
-
-"<hr>"
-
+"</div>"
 
 // ======================================================
 // CONTROL LEDS VENTANA
 // ======================================================
 
-"<h2>CONTROL LEDS VENTANA</h2>"
+"<div class='card'>"
 
-"<button onclick=\"setLight('on')\">ENCENDER LEDS</button>"
+"<h2> Iluminación en ventanas</h2>"  // Título de sección.
 
-"<br><br>"
+"<button class='on' onclick=\"setLight('on')\">"  // Botón para encender LEDs.
+"ENCENDER"
+"</button>"
 
-"<button onclick=\"setLight('off')\">APAGAR LEDS</button>"
-
-"<br><br>"
-
+"<button class='off' onclick=\"setLight('off')\">"  // Botón para apagar LEDs.
+"APAGAR"
+"</button>"
 
 // ======================================================
 // SLIDER BRILLO
 // ======================================================
 
-// Slider para controlar brillo.
-"<input type='range' min='0' max='100' value='0' id='slider' "
+// Barra deslizante para controlar el brillo.
+"<input "
+"type='range' "
+"min='0' "
+"max='100' "
+"value='0' "
+"id='slider' "
 "oninput='setBrightness(this.value)'>"
 
-"<br><br>"
+"<div class='value' id='brillo_txt'>"  // Texto que muestra porcentaje actual.
+"0%"
+"</div>"
 
-"<p id='brillo_txt'>Brillo: 0%</p>"  // Texto de porcentaje de brillo.
+"<div class='status' id='estado_luz'>"  // Texto que indica el estado de los LEDs.
+"APAGADOS"
+"</div>"
 
-"<p id='estado_luz'>Estado LEDs ventana: APAGADOS</p>"  // Estado de LEDs ventana.
-
-"<hr>"
-
+"</div>"
 
 // ======================================================
 // ESTADO LUZ PUERTA
 // ======================================================
 
-"<h2>ESTADO LUZ PUERTA</h2>"
+"<div class='card'>"
 
-"<p id='estado_luz_puerta'>Luz puerta: APAGADA</p>"
+"<h2> Luz de la Puerta</h2>"  // Título de sección.
 
-"<hr>"
+"<div class='status' id='estado_luz_puerta'>"
+"APAGADA"
+"</div>"
+
+"</div>"
 
 
 // ======================================================
 // RESET SISTEMA
 // ======================================================
 
-"<h2>RESET DEL SISTEMA</h2>"
+"<div class='card'>"
 
-"<button onclick=\"resetSystem()\">REINICIAR SISTEMA</button>"
+"<h2>⚙  Sistema</h2>"  // Título de sección.
 
-"<br><br>"
+"<button class='warning' onclick='resetSystem()'>"  // Botón para reiniciar sistema.
+"REINICIAR"
+"</button>"
 
-"<p id='estado_reset'>Sistema: NORMAL</p>"
+"<div class='status' id='estado_reset'>"  // Texto que muestra estado del sistema.
+"NORMAL"
+"</div>"
+
+"</div>"
+
+"</div>"
+
 
 
 // ======================================================
 // JAVASCRIPT
 // ======================================================
 
+
 "<script>"
 
-"function setDoor(action){"  // Función para controlar puerta.
+"function setDoor(action){"  // Envía comando para abrir/cerrar puerta.
 
 " fetch('/set?door='+action).then(update);"
 
 "}"
 
-"function setLight(action){"  // Función para controlar LEDs.
+"function setLight(action){"  // Envía comando para LEDs de ventana.
 
 " fetch('/set?light='+action).then(update);"
 
 "}"
 
-"function setBrightness(value){"  // Función para modificar brillo.
+"function setBrightness(value){"  // Envía nivel de brillo seleccionado.
 
 " fetch('/set?brightness='+value).then(update);"
 
 "}"
 
-"function resetSystem(){"  // Función para reiniciar sistema.
+"function resetSystem(){"  // Solicita reinicio del sistema.
 
 " fetch('/set?reset=1').then(update);"
 
@@ -227,27 +361,45 @@ static const char html[] =
 
 "function update(){"  // Solicita estados actuales al ESP32.
 
-" fetch('/state').then(r=>r.json()).then(s=>{"
+" fetch('/state')"
 
-"  document.getElementById('estado_puerta').innerText='Estado puerta: '+s.puerta;"
+" .then(r=>r.json())"
 
-"  document.getElementById('estado_luz').innerText='Estado LEDs ventana: '+s.luz_ventana;"
+" .then(s=>{"
 
-"  document.getElementById('brillo_txt').innerText='Brillo: '+s.brillo+'%';"
+"   document.getElementById('estado_puerta').innerText=s.puerta;"
 
-"  document.getElementById('slider').value=s.brillo;"  // Actualiza posición del slider.
+"   document.getElementById('estado_luz').innerText=s.luz_ventana;"
 
-"  document.getElementById('estado_luz_puerta').innerText='Luz puerta: '+s.luz_puerta;"
+"   document.getElementById('brillo_txt').innerText=s.brillo+'%';"
 
-"  document.getElementById('estado_reset').innerText='Sistema: '+s.reset;"
+"   document.getElementById('slider').value=s.brillo;"
+
+"   document.getElementById('estado_luz_puerta').innerText=s.luz_puerta;"
+
+"   document.getElementById('estado_reset').innerText=s.reset;"
+
+"   let puerta=document.getElementById('estado_puerta');"
+
+"   if(s.puerta=='ABIERTA'){"  // Cambia color según estado.
+
+"       puerta.className='status door-open';"  // Verde si está abierta.
+
+"   }"
+
+"   else{"
+
+"       puerta.className='status door-close';"  // Rojo si está cerrada.
+
+"   }"
 
 " });"
 
 "}"
 
-"setInterval(update,1200);"  // Actualiza información cada 1.2 segundos.
+"setInterval(update,1000);"  // Actualiza estados automáticamente. Lo cambie a cada segundo en vez se 1.2 s.
 
-"update();"
+"update();"  // Ejecuta actualización inicial al cargar página.
 
 "</script>"
 
