@@ -39,8 +39,8 @@
 #define CANAL_SERVO           LEDC_CHANNEL_3
 
 // ─── SERVO ───────────────────────────────────────────────────────────────────
-#define ANGULO_CERRADA        0
-#define ANGULO_ABIERTA        90
+#define ANGULO_CERRADA        115
+#define ANGULO_ABIERTA        25
 
 static const char *TAG = "ESCLAVO";
 
